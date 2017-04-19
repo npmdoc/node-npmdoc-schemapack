@@ -1,0 +1,260 @@
+<div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a
+
+        href="https://github.com/phretaddin/schemapack#readme"
+
+    >schemapack (v1.4.2)</a>
+</h1>
+<h4>The fastest and smallest JavaScript object serialization library. Efficiently encode your objects in to compact byte buffers and then decode them back in to objects on the receiver. Integrates very well with WebSockets.</h4>
+<div class="apidocSectionDiv"><a
+    href="#apidoc.tableOfContents"
+    id="apidoc.tableOfContents"
+><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.schemapack">module schemapack</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.schemapack.addTypeAlias">
+            function <span class="apidocSignatureSpan">schemapack.</span>addTypeAlias
+            <span class="apidocSignatureSpan">(newTypeName, underlyingType)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.schemapack.build">
+            function <span class="apidocSignatureSpan">schemapack.</span>build
+            <span class="apidocSignatureSpan">(schema, validate)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.schemapack.setStringEncoding">
+            function <span class="apidocSignatureSpan">schemapack.</span>setStringEncoding
+            <span class="apidocSignatureSpan">(stringEncoding)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.schemapack.setValidateByDefault">
+            function <span class="apidocSignatureSpan">schemapack.</span>setValidateByDefault
+            <span class="apidocSignatureSpan">(flag)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.schemapack" id="apidoc.module.schemapack">module schemapack</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.schemapack.addTypeAlias" id="apidoc.element.schemapack.addTypeAlias">
+        function <span class="apidocSignatureSpan">schemapack.</span>addTypeAlias
+        <span class="apidocSignatureSpan">(newTypeName, underlyingType)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function addTypeAlias(newTypeName, underlyingType) {
+  var everyType = Object.keys(readTypeDictStr);
+
+  if (everyType.indexOf(underlyingType) &#x3c; 0) { throw new TypeError(&#x22;Underlying type does not exist. Typo?&#x22;); }
+  else { aliasTypes[newTypeName] = underlyingType; }
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+```js
+sp.setStringEncoding(&#x27;ascii&#x27;);
+```
+
+### Add type aliases:
+```js
+sp.<span class="apidocCodeKeywordSpan">addTypeAlias</span>(&#x27;int&#x27;, &#x27;varuint&#x27;);
+var builtSchema = sp.build([ &#x27;string&#x27;, &#x27;int&#x27; ]);
+var buffer = builtSchema.encode([ &#x27;dave&#x27;, 1, 2, 3 ]);
+var object = builtSchema.decode(buffer);
+console.log(object); // [ &#x27;dave&#x27;, 1, 2, 3 ]
+```
+
+### Validation
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.schemapack.build" id="apidoc.element.schemapack.build">
+        function <span class="apidocSignatureSpan">schemapack.</span>build
+        <span class="apidocSignatureSpan">(schema, validate)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function build(schema, validate) {
+  var builtSchema = getCompiledSchema(schema, validate === undefined ? validateByDefault : validate);
+
+  var compiledEncode = builtSchema[0];
+  var compiledDecode = builtSchema[1];
+
+  return {
+    &#x22;encode&#x22;: function(json) {
+      var itemWrapper = { &#x22;a&#x22;: json };
+      return compiledEncode(itemWrapper, bag);
+    },
+    &#x22;decode&#x22;: function(buffer) {
+      var bufferWrapper = Buffer.isBuffer(buffer) ? buffer : bufferFrom(buffer);
+      return compiledDecode(bufferWrapper, bag);
+    }
+  }
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+## [Example](https://tonicdev.com/npm/schemapack)
+
+```js
+// On both the client and server:
+var sp = require(&#x27;./schemapack&#x27;);
+
+var playerSchema = sp.<span class="apidocCodeKeywordSpan">build</span>({
+    health: &#x22;varuint&#x22;,
+    jumping: &#x22;boolean&#x22;,
+    position: [ &#x22;int16&#x22; ],
+    attributes: { str: &#x27;uint8&#x27;, agi: &#x27;uint8&#x27;, int: &#x27;uint8&#x27; }
+});
+
+// On the client:
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.schemapack.setStringEncoding" id="apidoc.element.schemapack.setStringEncoding">
+        function <span class="apidocSignatureSpan">schemapack.</span>setStringEncoding
+        <span class="apidocSignatureSpan">(stringEncoding)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function setStringEncoding(stringEncoding) {
+  var requested = stringEncoding.trim().toLowerCase();
+  var available = [ &#x27;ascii&#x27;, &#x27;utf8&#x27;, &#x27;utf16le&#x27;, &#x27;ucs2&#x27;, &#x27;base64&#x27;, &#x27;binary&#x27;, &#x27;hex&#x27; ];
+  if (available.indexOf(requested) &#x3e; -1) { strEnc = requested; }
+  else { throw new TypeError(&#x22;String encoding not available&#x22;); }
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+];
+```
+
+### Set the encoding used for strings:
+`&#x27;utf8&#x27;` is the default. If you only need to support English, changing the string encoding to `&#x27;ascii&#x27;` can
+increase speed. Choose between `&#x27;ascii&#x27;`, `&#x27;utf8&#x27;`, `&#x27;utf16le&#x27;`, `&#x27;ucs2&#x27;`, `&#x27;base64
+&#x27;`, `&#x27;binary&#x27;`, and `&#x27;hex&#x27;`.
+
+```js
+sp.<span class="apidocCodeKeywordSpan">setStringEncoding</span>(&#x27;ascii&#x27;);
+```
+
+### Add type aliases:
+```js
+sp.addTypeAlias(&#x27;int&#x27;, &#x27;varuint&#x27;);
+var builtSchema = sp.build([ &#x27;string&#x27;, &#x27;int&#x27; ]);
+var buffer = builtSchema.encode([ &#x27;dave&#x27;, 1, 2, 3 ]);
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.schemapack.setValidateByDefault" id="apidoc.element.schemapack.setValidateByDefault">
+        function <span class="apidocSignatureSpan">schemapack.</span>setValidateByDefault
+        <span class="apidocSignatureSpan">(flag)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function setValidateByDefault(flag) { validateByDefault = flag; }</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+```js
+var builtSchema = sp.build({ &#x22;sample&#x22;: &#x22;string&#x22; }, false); // Validation checks won&#x27;t be added to the encode
+ function
+```
+
+To avoid having to pass this flag to each call of build, you can instead call `setValidateByDefault` to set the default validation
+ strategy. Example:
+
+```js
+sp.<span class="apidocCodeKeywordSpan">setValidateByDefault</span>(false);
+```
+
+Setting the parameter to false will disable validation by default, while true will enable validation by default.
+
+### Make single item schemas:
+```js
+var builtSchema = sp.build(&#x22;varint&#x22;);
+...</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
