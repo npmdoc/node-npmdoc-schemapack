@@ -1,6 +1,6 @@
 # npmdoc-schemapack
 
-#### api documentation for  [schemapack (v1.4.2)](https://github.com/phretaddin/schemapack#readme)  [![npm package](https://img.shields.io/npm/v/npmdoc-schemapack.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-schemapack) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-schemapack.svg)](https://travis-ci.org/npmdoc/node-npmdoc-schemapack)
+#### basic api documentation for  [schemapack (v1.4.2)](https://github.com/phretaddin/schemapack#readme)  [![npm package](https://img.shields.io/npm/v/npmdoc-schemapack.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-schemapack) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-schemapack.svg)](https://travis-ci.org/npmdoc/node-npmdoc-schemapack)
 
 #### The fastest and smallest JavaScript object serialization library. Efficiently encode your objects in to compact byte buffers and then decode them back in to objects on the receiver. Integrates very well with WebSockets.
 
@@ -79,7 +79,8 @@
         "test": "ava"
     },
     "tonicExampleFilename": "tonic.js",
-    "version": "1.4.2"
+    "version": "1.4.2",
+    "bin": {}
 }
 ```
 
